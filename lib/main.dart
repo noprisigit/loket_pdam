@@ -420,6 +420,28 @@ class _MainPageState extends State<MainPage> {
                                                 Padding(
                                                   padding: EdgeInsets.all(2.0),
                                                   child: Text(
+                                                      "Periode Tunggakan"
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.all(2.0),
+                                                  child: Text(
+                                                      " : "
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.all(2.0),
+                                                  child: Text(
+                                                      "${userData['tagihan'][0]['periode']}"
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                            Row(
+                                              children: <Widget>[
+                                                Padding(
+                                                  padding: EdgeInsets.all(2.0),
+                                                  child: Text(
                                                       "Pemakaian (M3)"
                                                   ),
                                                 ),
