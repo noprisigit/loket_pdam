@@ -57,6 +57,7 @@ class _MainPageState extends State<MainPage> {
   bool isLoading = false;
 
   String codeOnline;
+  String _levelUser;
 
   String pathImage;
   int biayaAdmin = 0;
@@ -107,6 +108,12 @@ class _MainPageState extends State<MainPage> {
             isLoading = false;
             userData = jsonResponse;
             codeOnline = userData['tagihan'][0]['kd_online'];
+            _levelUser = userData['user']['level_user'];
+            print(_levelUser);
+
+            if (userData['user']['level_user'] != "loket") {
+              Toast.show("Akun ini bukan loket", context, duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+            } 
 
             if (userData['user']['type'] == "internal") {
               biayaAdmin = int.parse(userData['user']['biaya_admin']);
@@ -140,6 +147,7 @@ class _MainPageState extends State<MainPage> {
           // print(response.body);
           isLoading = false;
           issetData = false;
+          Toast.show("Token Expired, Please Relogin", context, duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
         });
       }
     } else {
@@ -285,9 +293,9 @@ class _MainPageState extends State<MainPage> {
                             setState(() {
                               isLoading = true;
                               searchCustomer(_customerOnlineCode.text);
-                              
                             });
                           }
+
                           _customerOnlineCode.clear();
                         },
                         child: Text(
@@ -567,14 +575,15 @@ class _MainPageState extends State<MainPage> {
               Padding(
                 padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 50),
                 child: MaterialButton(
-                  onPressed: codeOnline == null ? null : () {
-                    if (_connected && codeOnline != null) {
-                      setState(() { 
-                        codeOnline = null;
-                      });
-                      _tesPrint();
-                    }
-                  },
+                  onPressed: (_connected && codeOnline != null && userData['user']['level_user'] == "loket" ) ?  _tesPrint : null,
+                  // onPressed: codeOnline == null && _levelUser != "loket" ? null : () {
+                  //   if (_connected && codeOnline != null && _levelUser == "loket") {
+                  //     setState(() { 
+                  //       codeOnline = null;
+                  //     });
+                  //     _tesPrint();
+                  //   }
+                  // },
                   child: Text(
                     'Bayar',
                     style: TextStyle(
