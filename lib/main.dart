@@ -93,7 +93,6 @@ class _MainPageState extends State<MainPage> {
 
   Future searchCustomer(String value) async {
     if (widget.datatoken != null) {
-      // print("Token Ada : " + widget.datatoken);
       String url = "http://e-water.systems/adfin_pdam/public/api/v1/finance/tagihan/";
       var jsonResponse;
       var response = await http.get( url + value, headers: {
@@ -127,34 +126,20 @@ class _MainPageState extends State<MainPage> {
           });
         } else {
           setState(() {
-            // print("Data Tidak Ditemukan");
-            // print(response.body);
             isLoading = false;
             issetData = false;
           });
         }
-        // print(userData.toString());
-//        print(userData['tagihan'][0]['nama_pelanggan']);
-//        print(userData['pdam'][0]['alamat']);
-        // print('Username ' + userData['user']['name']);
-        // print('Type : ${userData['user']['type']}');
-        // print('Biaya Admin : ${biaya_admin.toString()}');
-        // print('Total Tagihan : ${total_tagihan.toString()}');
-        // print('Jumlah Tagihan : ${jumlah.toString()}');
       } else {
         setState(() {
-          // print("error code : " + response.statusCode.toString());
-          // print(response.body);
           isLoading = false;
           issetData = false;
-          Toast.show("Token Expired, Please Relogin", context, duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
         });
       }
     } else {
       setState(() {
         isLoading = false;
         issetData = false;
-        Toast.show("Token Expired, Please Log Out", context, duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
       });
       print("Token Kosong");
     }
