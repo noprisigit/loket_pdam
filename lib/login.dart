@@ -1,6 +1,7 @@
 import 'dart:convert';
 // import 'dart:async';
 import 'package:toast/toast.dart';
+import 'package:tp2/dashboard.dart';
 import 'package:tp2/main.dart';
 import 'package:tp2/utils/colors_utils.dart';
 import 'package:flutter/material.dart';
@@ -55,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
           print(token);
           Toast.show("You are now logged in", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
           sharedPreferences.setString("token", jsonResponse['token']);
-          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => MainPage(datatoken: token)), (Route<dynamic> route) => false);
+          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => Dashboard(datatoken: token)), (Route<dynamic> route) => false);
         }
       }
       else {

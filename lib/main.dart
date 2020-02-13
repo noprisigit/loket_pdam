@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:toast/toast.dart';
+import 'package:tp2/dashboard.dart';
 import 'package:tp2/login.dart';
 import 'dart:async';
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
@@ -32,9 +33,9 @@ class MyApp extends StatelessWidget {
 }
 
 class MainPage extends StatefulWidget {
-  MainPage({Key key, this.datatoken}) : super(key:key);
+  MainPage({Key key, this.token}) : super(key:key);
 
-  String datatoken;
+  String token;
   @override
   _MainPageState createState() => new _MainPageState();
 }
@@ -92,12 +93,13 @@ class _MainPageState extends State<MainPage> {
  }
 
   Future searchCustomer(String value) async {
-    if (widget.datatoken != null) {
+    if (widget.token != null) {
+      print("Data token : " + widget.token);
       String url = "http://e-water.systems/adfin_pdam/public/api/v1/finance/tagihan/";
       var jsonResponse;
       var response = await http.get( url + value, headers: {
         'Accept' : 'application/json',
-        'Authorization' : 'Bearer ${widget.datatoken}'
+        'Authorization' : 'Bearer ${widget.token}'
       });
       if (response.statusCode == 200) {
         jsonResponse = json.decode(response.body);
@@ -124,17 +126,22 @@ class _MainPageState extends State<MainPage> {
               jumlah = biayaAdmin + totalTagihan;
             }
           });
+          print(response.body);
+          print(userData.toString());
         } else {
           setState(() {
             isLoading = false;
             issetData = false;
           });
+          print(response.body);
         }
       } else {
         setState(() {
           isLoading = false;
           issetData = false;
         });
+        print(response.statusCode);
+        print(response.body);
       }
     } else {
       setState(() {
@@ -187,24 +194,11 @@ class _MainPageState extends State<MainPage> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: Text('LOKET PDAM'),
-          actions: <Widget>[
-            FlatButton(
-              onPressed: () {
-                sharedPreferences.clear();
-                // sharedPreferences.commit();
-                widget.datatoken = "";
-                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => LoginPage()), (Route<dynamic> route) => false);
-                Toast.show("You are logout", context, duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-              },
-              child: Text(
-                "Log Out",
-                style: TextStyle(
-                  color: Colors.white
-                )
-              ),
-            )
-          ],
+          title: Text('BAYAR TAGIHAN'),
+          leading: new IconButton(
+            icon: new Icon(Icons.arrow_back),
+            onPressed: () => Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => Dashboard()), (Route<dynamic> route) => false)
+          ),
         ),
         body: Container(
           child: ListView(
