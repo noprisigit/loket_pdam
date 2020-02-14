@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tp2/main.dart';
+import 'package:tp2/tagihan.dart';
 import 'utils/colors_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
@@ -48,7 +49,9 @@ class _DashboardState extends State<Dashboard> {
               Padding(
                 padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 30),
                 child: MaterialButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => Tagihan(token: widget.datatoken)), (Route<dynamic> route) => false); 
+                  },
                   child: Text(
                     'Cek Tagihan',
                     style: TextStyle(
