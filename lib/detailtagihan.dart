@@ -5,7 +5,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:toast/toast.dart';
-import 'package:tp2/dashboard.dart';
 import 'package:tp2/login.dart';
 import 'dart:async';
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
@@ -28,8 +27,6 @@ class DetailTagihan extends StatefulWidget {
 
 class _DetailTagihanState extends State<DetailTagihan> {
   SharedPreferences sharedPreferences;
-
-  TextEditingController _customerOnlineCode = new TextEditingController();
 
   BlueThermalPrinter bluetooth = BlueThermalPrinter.instance;
 

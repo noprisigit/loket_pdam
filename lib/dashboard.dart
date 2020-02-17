@@ -17,6 +17,19 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   SharedPreferences sharedPreferences;
 
+  checkLoginStatus() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    if(sharedPreferences.getString("token") == null) {
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => LoginPage()), (Route<dynamic> route) => false);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    checkLoginStatus();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

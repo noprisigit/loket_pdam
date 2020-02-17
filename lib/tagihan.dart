@@ -23,8 +23,6 @@ class _TagihanState extends State<Tagihan> {
 
   bool _loading = false;
   bool _issetData = false;
-  bool _isDataFound = false;
-  bool _validate = false;
 
   String _codeOnline;
 
@@ -36,7 +34,6 @@ class _TagihanState extends State<Tagihan> {
       setState(() {
         _issetData = true;
         _loading = false;
-        _isDataFound = true;
         listData = data['tagihan'];
       });
     } else {
@@ -44,7 +41,6 @@ class _TagihanState extends State<Tagihan> {
         listData = null;
         _issetData = false;
         _loading = false;
-        _isDataFound = false;
       });
     }
     print(listData.toList());

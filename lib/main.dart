@@ -70,14 +70,6 @@ class _MainPageState extends State<MainPage> {
     super.initState();
     initPlatformState();
     initSavetoPath();
-    checkLoginStatus();
-  }
-
-  checkLoginStatus() async {
-    sharedPreferences = await SharedPreferences.getInstance();
-    if(sharedPreferences.getString("token") == null) {
-      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => LoginPage()), (Route<dynamic> route) => false);
-    }
   }
 
  initSavetoPath() async{

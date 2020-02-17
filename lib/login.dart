@@ -2,7 +2,6 @@ import 'dart:convert';
 // import 'dart:async';
 import 'package:toast/toast.dart';
 import 'package:tp2/dashboard.dart';
-import 'package:tp2/main.dart';
 import 'package:tp2/utils/colors_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,7 +15,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  SharedPreferences sharedPreferences;
   bool isValidate = false;
   bool isLoading = false;
 
@@ -34,7 +32,6 @@ class _LoginPageState extends State<LoginPage> {
     TextEditingController _passInputController = new TextEditingController();
 
     signIn(String email, pass) async {
-      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
       Map data = {
         'email': email,
@@ -44,6 +41,7 @@ class _LoginPageState extends State<LoginPage> {
       print(data.values.toString());
 
       var jsonResponse;
+      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
       var response = await http.post("http://e-water.systems/adfin_pdam/public/api/v1/login", body: data);
       if(response.statusCode == 200) {
 
@@ -56,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
           print(token);
           Toast.show("You are now logged in", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
           sharedPreferences.setString("token", jsonResponse['token']);
-          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => Dashboard(datatoken: token)), (Route<dynamic> route) => false);
+          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => Dashboard(datatoken: sharedPreferences.get("token"))), (Route<dynamic> route) => false);
         }
       }
       else {
