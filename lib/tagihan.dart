@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
 import 'package:tp2/dashboard.dart';
+import 'package:tp2/detailtagihan.dart';
 import 'package:tp2/utils/colors_utils.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
@@ -22,18 +23,30 @@ class _TagihanState extends State<Tagihan> {
 
   bool _loading = false;
   bool _issetData = false;
+  bool _isDataFound = false;
+  bool _validate = false;
+
+  String _codeOnline;
 
   Future getData(String value) async {
-    String url =
-        "http://e-water.systems/adfin_pdam/public/api/v1/finance/tagihanAll/";
-    var response =
-        await http.get(url + value, headers: {'Accept': 'application/json'});
-    data = json.decode(response.body);
-    setState(() {
-      _issetData = true;
-      _loading = false;
-      listData = data['tagihan'];
-    });
+    String url = "http://e-water.systems/adfin_pdam/public/api/v1/finance/tagihanAll/";
+    var response = await http.get(url + value, headers: {'Accept': 'application/json'});
+    if (response.statusCode == 200) {
+      data = json.decode(response.body);
+      setState(() {
+        _issetData = true;
+        _loading = false;
+        _isDataFound = true;
+        listData = data['tagihan'];
+      });
+    } else {
+      setState(() {
+        listData = null;
+        _issetData = false;
+        _loading = false;
+        _isDataFound = false;
+      });
+    }
     print(listData.toList());
   }
 
@@ -55,68 +68,86 @@ class _TagihanState extends State<Tagihan> {
         ));
 
     final formTagihan = Padding(
-        padding: EdgeInsets.all(10.0),
-        child: TextField(
-          controller: _formTagihan,
-          keyboardType: TextInputType.number,
-          style: TextStyle(fontSize: 16.0),
-          decoration: InputDecoration(
-              hintText: "Kode Online Pelanggan",
-              enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blue)),
-              focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: HexColor('#1ab394')))),
-        ));
+      padding: EdgeInsets.all(10.0),
+      child: TextField(
+        controller: _formTagihan,
+        keyboardType: TextInputType.number,
+        style: TextStyle(fontSize: 16.0),
+        decoration: InputDecoration(
+          hintText: "Kode Online Pelanggan",
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.blue)
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: HexColor('#1ab394'))
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red)
+          ),
+        ),
+      )
+    );
 
     final button = Center(
-        child: Padding(
-            padding: EdgeInsets.all(10.0),
-            child: Material(
-              borderRadius: BorderRadius.circular(10.0),
-              shadowColor: Colors.black38,
-              elevation: 5.0,
-              child: MaterialButton(
-                onPressed: () {
-                  setState(() {
-                    _loading = true;
-                  });
-                  getData(_formTagihan.text);
-                },
-                child: Text(
-                  "Submit",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Nunito',
-                      fontWeight: FontWeight.w700),
-                ),
-                minWidth: 200.0,
-                height: 50.0,
-                color: HexColor('#1ab394'),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5.0)),
+      child: Padding(
+        padding: EdgeInsets.all(10.0),
+        child: Material(
+          borderRadius: BorderRadius.circular(10.0),
+          shadowColor: Colors.black38,
+          elevation: 5.0,
+          child: MaterialButton(
+            onPressed: () {
+              if (_formTagihan.text == "") {
+                setState(() {
+                  Toast.show("Kode Online Tidak Boleh Kosong", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                  return null;
+                });
+              } else {
+                setState(() {
+                  _loading = true;
+                  _codeOnline = _formTagihan.text;
+                });
+                getData(_formTagihan.text);
+              }
+            },
+            child: Text(
+              "Submit",
+              style: TextStyle(
+                color: Colors.white,
+                fontFamily: 'Nunito',
+                fontWeight: FontWeight.w700
               ),
-            )));
-
-    final listPelangganNotFound = ListView(children: <Widget>[
-      _loading ? Center(child: CircularProgressIndicator()) : Card(
-          child: Padding(
-            padding: EdgeInsets.all(10.0),
-            child: Center(
-              child: Text(
-                "Data Tagihan Tidak Ditemukan / Tagihan Sudah Dibayar",
-                style:
-                    TextStyle(fontSize: 14.0, fontWeight: FontWeight.w700),
-                textAlign: TextAlign.center,
-              ),
+            ),
+            minWidth: 200.0,
+            height: 50.0,
+            color: HexColor('#1ab394'),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5.0)
             ),
           ),
         )
-      ], 
-      shrinkWrap: true
+      )
     );
 
     final listPelanggan = _issetData == false ? Text("") : Container(
-      child: Column(
+      child: listData.length == 0 ? ListView(children: <Widget>[
+        _loading ? Center(child: CircularProgressIndicator()) : Card(
+            child: Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Center(
+                child: Text(
+                  "Data Tagihan Tidak Ditemukan / Tagihan Sudah Dibayar",
+                  style: TextStyle(
+                    fontSize: 14.0, fontWeight: FontWeight.w700
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          )
+        ], 
+        shrinkWrap: true
+      ) : Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(
@@ -139,7 +170,16 @@ class _TagihanState extends State<Tagihan> {
               itemBuilder: (BuildContext context, int index) {
                 return GestureDetector(
                   onTap: () {
-                   
+                    if (index != 0) {
+                      Toast.show("Anda masih punya tunggakan", context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DetailTagihan(token: widget.token, codeOnline: _codeOnline, loading: _loading),
+                        ),
+                      );                    
+                    }
                   },
                   child: Card(
                     child: Padding(
@@ -193,18 +233,19 @@ class _TagihanState extends State<Tagihan> {
             ),
           )
         ],
-      ),
+      ) 
     );
 
     return Scaffold(
       appBar: AppBar(
         title: Center(child: Text("List Tagihan")),
         leading: new IconButton(
-            icon: new Icon(Icons.arrow_back),
-            onPressed: () => Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                    builder: (BuildContext context) => Dashboard()),
-                (Route<dynamic> route) => false)),
+        icon: new Icon(Icons.arrow_back),
+        onPressed: () => Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (BuildContext context) => Dashboard()),
+          (Route<dynamic> route) => false)
+        ),
       ),
       body: Container(
         child: ListView(
@@ -213,10 +254,12 @@ class _TagihanState extends State<Tagihan> {
             formTagihan,
             button,
             SizedBox(height: 10.0),
-            listPelanggan
+            _loading ? Center(child: CircularProgressIndicator(backgroundColor: Colors.blue)) : listPelanggan
           ],
         ),
       ),
     );
   }
 }
+
+
