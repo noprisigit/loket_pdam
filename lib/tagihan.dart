@@ -239,7 +239,7 @@ class _TagihanState extends State<Tagihan> {
         icon: new Icon(Icons.arrow_back),
         onPressed: () => Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-            builder: (BuildContext context) => Dashboard()),
+            builder: (BuildContext context) => Dashboard(datatoken: widget.token)),
           (Route<dynamic> route) => false)
         ),
       ),
