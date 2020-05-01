@@ -189,7 +189,7 @@ class _MainPageState extends State<MainPage> {
           title: Text('BAYAR TAGIHAN'),
           leading: new IconButton(
             icon: new Icon(Icons.arrow_back),
-            onPressed: () => Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => Dashboard()), (Route<dynamic> route) => false)
+            onPressed: () => Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => Dashboard(datatoken: widget.token)), (Route<dynamic> route) => false)
           ),
         ),
         body: Container(
